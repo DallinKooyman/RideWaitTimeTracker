@@ -265,28 +265,27 @@ fun AppTheme(
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
-  val view = LocalView.current
-  if (!view.isInEditMode) {
-    SideEffect {
-      val window = (view.context as Activity).window
-      window.statusBarColor = colorScheme.primary.toArgb()
-      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        darkTheme -> darkScheme
+        else -> lightScheme
     }
-  }
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
+    }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
 }
-

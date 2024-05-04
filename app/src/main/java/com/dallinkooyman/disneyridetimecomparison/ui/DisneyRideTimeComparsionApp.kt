@@ -1,5 +1,6 @@
 package com.dallinkooyman.disneyridetimecomparison.ui
 
+import android.content.res.Resources.Theme
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -11,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
 
 enum class AppScreens(@StringRes val title: Int) {
     Home(title = R.string.home_screen)
@@ -71,7 +74,9 @@ fun BottomNavBar(
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(Icons.Default.Home, contentDescription = "Home Page")
             }
-        }
+        },
+        containerColor = secondaryContainerDark
+
     )
 }
 
