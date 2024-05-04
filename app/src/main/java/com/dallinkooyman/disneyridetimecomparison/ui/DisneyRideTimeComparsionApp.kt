@@ -1,32 +1,37 @@
 package com.dallinkooyman.disneyridetimecomparison.ui
 
-import android.content.res.Resources.Theme
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.ThumbUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
-import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 
-enum class AppScreens(@StringRes val title: Int) {
-    Home(title = R.string.home_screen)
+enum class AppScreens {
+    Home,
+    Stats,
+    History
 }
 
 @Composable
@@ -42,7 +47,7 @@ fun DisneyRideTimeComparisonApp(
             BottomNavBar(
                 canNavigateBack = true,
                 navigateUp = { /*TODO*/ },
-                currentScreen = currentScreen
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -54,37 +59,98 @@ fun DisneyRideTimeComparisonApp(
             composable(route = AppScreens.Home.name){
                 HomeScreen()
             }
+            composable(route = AppScreens.Stats.name){
+                HomeScreen()
+            }
+            composable(route = AppScreens.History.name){
+                HomeScreen()
+            }
         }
     }
 }
-
 
 @Composable
 fun BottomNavBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
-    currentScreen: AppScreens,
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    BottomAppBar(
-        actions = {
-//            IconButton(onClick = { /*TODO*/ }) {
-//                Icon(painterResource(id = R.drawable.icons8_bar_chart_100), contentDescription = "Stats Icon")
-//            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Default.Home, contentDescription = "Home Page")
-            }
-        },
-        containerColor = secondaryContainerDark
-
-    )
+    NavigationBar{
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentScreen = navBackStackEntry?.destination?.route
+        NavigationBarItem(
+            selected = AppScreens.Stats.name == currentScreen,
+            onClick = { navController.navigate((AppScreens.Stats.name)) },
+            icon = {
+                if (AppScreens.Stats.name == currentScreen){
+                    Icon(
+                        painterResource(R.drawable.leaderboard_filled),
+                        contentDescription = "Stats Screen",
+                        modifier = Modifier.size(40.dp)
+                    )
+                } else {
+                    Icon(
+                        painterResource(R.drawable.leaderboard),
+                        contentDescription = "Stats Screen",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            },
+            label = { Text(text = "Stats")}
+        )
+        NavigationBarItem(
+            selected = AppScreens.Home.name == currentScreen,
+            onClick = { navController.navigate((AppScreens.Home.name)) },
+            icon = {
+                if (AppScreens.Home.name == currentScreen){
+                    Icon(
+                        painterResource(R.drawable.home_filled),
+                        contentDescription = "Main Menu",
+                        modifier = Modifier.size(40.dp)
+                    )
+                } else {
+                    Icon(
+                        painterResource(R.drawable.home),
+                        contentDescription = "Main menu",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            },
+            label = { Text(text = "Home")}
+        )
+        NavigationBarItem(
+            selected = AppScreens.History.name == currentScreen,
+            onClick = { navController.navigate((AppScreens.History.name)) },
+            icon = {
+                if (AppScreens.History.name == currentScreen){
+                    Icon(
+                        painterResource(R.drawable.history_selected),
+                        contentDescription = "History Screen",
+                        modifier = Modifier.size(40.dp)                       )
+                } else {
+                    Icon(
+                        painterResource(R.drawable.history),
+                        contentDescription = "History Screen",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            },
+            label = { Text(text = "Ride History")}
+        )
+    }
 }
 
 @Preview
 @Composable
 fun BottomNavBarPreview(){
-    BottomNavBar(
-        canNavigateBack = true,
-        navigateUp = { /*TODO*/ },
-        currentScreen = AppScreens.Home)
+    val navController = rememberNavController()
+    AppTheme{
+        BottomNavBar(
+            canNavigateBack = true,
+            navigateUp = { /*TODO*/ },
+            navController = navController
+        )
+    }
+
 }
