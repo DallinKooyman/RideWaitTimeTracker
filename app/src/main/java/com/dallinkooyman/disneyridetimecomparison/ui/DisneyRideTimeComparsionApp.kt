@@ -2,13 +2,6 @@ package com.dallinkooyman.disneyridetimecomparison.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.ThumbUp
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
+import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 
 enum class AppScreens {
