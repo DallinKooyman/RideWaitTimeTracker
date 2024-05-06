@@ -1,5 +1,6 @@
 package com.dallinkooyman.disneyridetimecomparison.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
+import com.dallinkooyman.disneyridetimecomparison.model.Ride
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 
@@ -51,13 +53,22 @@ fun DisneyRideTimeComparisonApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = AppScreens.Home.name){
-                HomeScreen()
+                HomeScreen(
+                    ride = Ride(),
+                    modifier = Modifier.fillMaxSize()
+                )
             }
             composable(route = AppScreens.Stats.name){
-                HomeScreen()
+                HomeScreen(
+                    null,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
             composable(route = AppScreens.History.name){
-                HomeScreen()
+                HomeScreen(
+                    null,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

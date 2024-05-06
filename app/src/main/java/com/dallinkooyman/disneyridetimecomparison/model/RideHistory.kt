@@ -48,7 +48,7 @@ class RideHistory {
             apiDifferenceInMinutes = timeWaited - apiPostedTime;
         }
 
-        return apiDifferenceInMinutes!!
+        return apiDifferenceInMinutes
     }
 
     fun getRidePostedDifferenceInMinutes(): Int? {
@@ -59,7 +59,7 @@ class RideHistory {
             ridePostedDifferenceInMinutes = timeWaited - ridePostedWaitTime;
         }
 
-        return ridePostedDifferenceInMinutes!!
+        return ridePostedDifferenceInMinutes
     }
 
     fun getApiToPostedDifferenceInMinutes(): Int? {
@@ -70,7 +70,7 @@ class RideHistory {
             apiToPostedDifferenceInMinutes = ridePostedWaitTime - apiPostedTime;
         }
 
-        return apiToPostedDifferenceInMinutes!!
+        return apiToPostedDifferenceInMinutes
     }
 
     fun getApiToWaitDifferenceInPercent(): Double? {
@@ -81,7 +81,7 @@ class RideHistory {
             apiToWaitDifferenceInPercent = String.format("%.2f", timeWaited.toDouble() / apiPostedTime.toDouble() * 100).toDouble()
         }
 
-        return apiToWaitDifferenceInPercent!!
+        return apiToWaitDifferenceInPercent
     }
 
     fun getRideToWaitDifferenceInPercent(): Double? {
@@ -92,7 +92,7 @@ class RideHistory {
             rideToWaitDifferenceInPercent = String.format("%.2f", timeWaited.toDouble() / ridePostedWaitTime.toDouble() * 100).toDouble()
         }
 
-        return rideToWaitDifferenceInPercent!!
+        return rideToWaitDifferenceInPercent
     }
 
     fun getApiToRideDifferenceInPercent(): Double? {
@@ -103,7 +103,7 @@ class RideHistory {
             apiToRideDifferenceInPercent = String.format("%.2f", ridePostedWaitTime.toDouble() / apiPostedTime.toDouble() * 100).toDouble()
         }
 
-        return apiToRideDifferenceInPercent!!
+        return apiToRideDifferenceInPercent
     }
 
 }
