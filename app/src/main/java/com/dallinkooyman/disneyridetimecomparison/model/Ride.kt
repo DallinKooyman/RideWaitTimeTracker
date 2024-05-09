@@ -1,36 +1,33 @@
 package com.dallinkooyman.disneyridetimecomparison.model
 
-class Ride(val rideName: String = "Decked Out") {
+class Ride(private val rideName: String = "Decked Out") {
 
     var apiWaitTime: Int = -1
-    var ridePostedWaitTime: Int = -3
-    var currentApiWaitTime: Int = -5
-    var totalWaitTime: Int = -7
+    var totalWaitTime: Int = -3
 
     //A fun stat to track, not all rides have them
     var hasInteractable: Boolean = false
-
-    private var rideHistory: MutableSet<RideHistory> = mutableSetOf()
-
+    // -5 For debug reasons
     private var totalTimeUntilFirstInteractable: Int? = null
 
-    fun addRide(ride: RideHistory){
-        rideHistory.add(ride)
-        totalWaitTime += ride.timeWaited
-        if (ride.timeUntilInteractable >= 0){
-            totalTimeUntilFirstInteractable = totalTimeUntilFirstInteractable?.plus(ride.timeUntilInteractable)
+    private var rideHistory: MutableSet<RideEvent> = mutableSetOf()
+
+    fun addRideEvent(rideEvent: RideEvent){
+        if (rideEvent.rideName == this.rideName && rideEvent.validRideEvent()) {
+            rideHistory.add(rideEvent)
+            totalWaitTime += rideEvent.timeWaited!!
+            if (rideEvent.timeUntilInteractable != null) {
+                hasInteractable = true
+                totalTimeUntilFirstInteractable =
+                    totalTimeUntilFirstInteractable?.plus(rideEvent.timeUntilInteractable!!)
+            }
         }
     }
 
-    fun getRideHistory(): MutableSet<RideHistory> {
+    fun getRideHistory(): MutableSet<RideEvent> {
         return rideHistory
     }
 
-    fun setTotalTotalTimeUntilFirstInteractable(time: Int) {
-        if (hasInteractable) {
-            totalTimeUntilFirstInteractable = time
-        }
-    }
     fun getTotalTimeUntilFirstInteractable(): Int? {
         return totalTimeUntilFirstInteractable
     }

@@ -1,11 +1,9 @@
 package com.dallinkooyman.disneyridetimecomparison.ui.screens
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,60 +13,91 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallinkooyman.disneyridetimecomparison.R
-import com.dallinkooyman.disneyridetimecomparison.model.Ride
+import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
+import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ChangeRideEventInfoDialog
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.onPrimaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.onSecondaryContainerDark
-import com.dallinkooyman.disneyridetimecomparison.ui.theme.onTertiaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
-import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
 
 @Composable
 fun HomeScreen(
-    ride: Ride?,
+    ride: RideEvent?,
+    onUpdateRideEventInfo: (RideEvent) -> Unit,
+    onOnRideButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (ride == null){
         Text(text = "New Ride Page is under Construction")
     }
     else {
-        CurrentRideScreen(ride = ride, modifier = modifier)
+        CurrentRideScreen(
+            rideEvent = ride,
+            onUpdateRideEventInfo = onUpdateRideEventInfo,
+            onOnRideButtonClicked = onOnRideButtonClicked,
+            modifier = modifier)
     }
 }
 
 
 @Composable
 fun CurrentRideScreen(
-    ride: Ride,
+    rideEvent: RideEvent,
+    onUpdateRideEventInfo: (RideEvent) -> Unit,
+    onOnRideButtonClicked: () -> Unit,
     modifier: Modifier
 ){
+    var showChangeRideDialog by remember { mutableStateOf(false) }
+    var onChangeRideInfoButtonClicked = {
+        showChangeRideDialog = true
+    }
+    var onDialogDismiss = {
+        showChangeRideDialog = false
+    }
+    var onDialogConfirm: (RideEvent) -> Unit = {
+        showChangeRideDialog = false
+        onUpdateRideEventInfo(rideEvent)
+    }
+
     Column (
         modifier = Modifier.fillMaxSize(),
     ){
         RideAttributeBox(
-            ride = ride,
+            rideEvent = rideEvent,
             modifier = modifier
                 .weight(0.6F)
                 .padding(top = 35.dp, start = 35.dp)
         )
         ButtonBox(
-            modifier = modifier.weight(0.35F)
+            onChangeRideInfoButtonClicked = onChangeRideInfoButtonClicked,
+            onOnRideButtonClicked = onOnRideButtonClicked,
+            modifier = modifier.weight(0.27F)
+        )
+    }
+    if (showChangeRideDialog){
+        ChangeRideEventInfoDialog(
+            currentRideEvent = rideEvent,
+            onDismiss = onDialogDismiss,
+            onConfirm = onDialogConfirm,
         )
     }
 }
 
 @Composable
 fun RideAttributeBox(
-    ride: Ride,
+    rideEvent: RideEvent,
     modifier: Modifier
 ){
     Box (
@@ -78,26 +107,26 @@ fun RideAttributeBox(
         Column {
             RideStringAttributeBox(
                 attribute = stringResource(R.string.ride_string),
-                value = ride.rideName,
+                value = rideEvent.rideName,
             )
             RideIntAttributeBox(
-                attribute = stringResource(R.string.wait_time_when_entered),
-                value = ride.apiWaitTime
+                attribute = stringResource(R.string.api_wait_time_when_entered),
+                value = rideEvent.apiPostedTime
             )
-            if (ride.apiWaitTime != ride.ridePostedWaitTime) {
+            if (!rideEvent.apiAndPostedTimeAreSame) {
                 RideIntAttributeBox(
                     attribute = stringResource(R.string.posted_time_when_entered),
-                    value = ride.ridePostedWaitTime
+                    value = rideEvent.ridePostedWaitTime
                 )
             }
             RideIntAttributeBox(
                 attribute = stringResource(R.string.total_waiting_time),
-                value = ride.totalWaitTime
+                value = rideEvent.timeWaited
             )
-            if (ride.getTotalTimeUntilFirstInteractable() != null) {
+            if (rideEvent.hasInteractable) {
                 RideIntAttributeBox(
                     attribute = stringResource(R.string.time_waited_to_the_first_interactable),
-                    value = ride.getTotalTimeUntilFirstInteractable()!!
+                    value = rideEvent.timeUntilInteractable
                 )
             }
         }
@@ -131,9 +160,10 @@ fun RideStringAttributeBox(
 @Composable
 fun RideIntAttributeBox(
     attribute: String,
-    value: Int,
+    value: Int?,
     modifier: Modifier = Modifier
 ) {
+    val displayString = value?.toString() ?: ""
     Box (
         modifier = modifier
     ){
@@ -143,7 +173,7 @@ fun RideIntAttributeBox(
                 fontSize = 20.sp
             )
             Text(
-                text = value.toString(),
+                text = displayString,
                 fontSize = 20.sp
             )
         }
@@ -152,6 +182,8 @@ fun RideIntAttributeBox(
 
 @Composable
 fun ButtonBox(
+    onChangeRideInfoButtonClicked: () -> Unit = {},
+    onOnRideButtonClicked:() -> Unit = {},
     modifier: Modifier
 ) {
     Box(
@@ -167,10 +199,10 @@ fun ButtonBox(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(180.dp)
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { onChangeRideInfoButtonClicked() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = secondaryContainerDark,
                     contentColor = onSecondaryContainerDark
@@ -183,7 +215,7 @@ fun ButtonBox(
                 )
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { onOnRideButtonClicked() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = primaryContainerDark,
                     contentColor = onPrimaryContainerDark
@@ -206,9 +238,13 @@ fun ButtonBox(
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    val testRide = Ride()
+    val testRide = RideEvent()
     AppTheme {
-        HomeScreen(testRide)
+        HomeScreen(
+            testRide,
+            onUpdateRideEventInfo = {},
+            onOnRideButtonClicked = {}
+        )
     }
 }
 

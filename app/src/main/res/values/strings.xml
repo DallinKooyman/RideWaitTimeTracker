@@ -4,7 +4,7 @@
     <string name="stats_screen">Stats</string>
     <string name="history_screen">History</string>
     <string name="ride_string">Ride</string>
-    <string name="wait_time_when_entered">Wait Time When Entered</string>
+    <string name="api_wait_time_when_entered">API Wait Time When Entered</string>
     <string name="total_waiting_time">Total Waiting Time</string>
     <string name="posted_time_when_entered">Posted Time when Entered</string>
     <string name="time_waited_to_the_first_interactable">Time Waited to the First Interactable</string>
