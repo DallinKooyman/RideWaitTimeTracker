@@ -44,8 +44,8 @@ class RideEvent {
 
     fun validRideEvent(): Boolean {
         return rideName != "Decked Out" && enteredLineTime > 0L && enteredRideTime >= 1L &&
-                apiPostedTime != null && (apiAndPostedTimeAreSame || ridePostedWaitTime != null) &&
-                (!hasInteractable || timeUntilInteractable != null) && timeWaited != null
+                apiPostedTime != null && (apiAndPostedTimeAreSame || ridePostedWaitTime != null)
+                && timeWaited != null
     }
 
     // If the time waited is null then return null

@@ -10,4 +10,6 @@
     <string name="time_waited_to_the_first_interactable">Time Waited to the First Interactable</string>
     <string name="change_ride_button_text">Change Ride Info</string>
     <string name="on_ride_button_text">On Ride</string>
+    <string name="at_interactable_button_text">At Interactable</string>
+    <string name="reached_interactable_dialog_title">Reached interactable?</string>
 </resources>

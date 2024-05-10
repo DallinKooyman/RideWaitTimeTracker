@@ -22,8 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
-import com.dallinkooyman.disneyridetimecomparison.model.Ride
-import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 
@@ -54,7 +52,7 @@ fun DisneyRideTimeComparisonApp(
             composable(route = AppScreens.Home.name){
                 HomeScreen(
                     ride = uiState.currentRideEvent,
-                    onUpdateRideEventInfo = {viewModel.updateCurrentRideEvent(it)},
+                    onChangeRideEventInfo = {viewModel.updateCurrentRideEvent(it)},
                     onOnRideButtonClicked = {
                         viewModel.updateCurrentRide(uiState.currentRide, uiState.currentRideEvent)
                     },
@@ -64,7 +62,7 @@ fun DisneyRideTimeComparisonApp(
             composable(route = AppScreens.Stats.name){
                 HomeScreen(
                     ride = null,
-                    onUpdateRideEventInfo = {},
+                    onChangeRideEventInfo = {},
                     onOnRideButtonClicked = {},
                     modifier = Modifier.fillMaxSize()
                 )
@@ -72,7 +70,7 @@ fun DisneyRideTimeComparisonApp(
             composable(route = AppScreens.History.name){
                 HomeScreen(
                     ride = null,
-                    onUpdateRideEventInfo = {},
+                    onChangeRideEventInfo = {},
                     onOnRideButtonClicked = {},
                     modifier = Modifier.fillMaxSize()
                 )

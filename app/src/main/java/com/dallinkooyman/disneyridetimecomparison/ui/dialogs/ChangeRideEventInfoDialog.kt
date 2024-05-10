@@ -41,7 +41,7 @@ fun ChangeRideEventInfoDialog(
     val updatedRideEvent by remember { mutableStateOf(currentRideEvent)}
 
     Dialog(
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false)
         ) {
         Card {
