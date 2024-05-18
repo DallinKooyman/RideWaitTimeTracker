@@ -1,5 +1,6 @@
 package com.dallinkooyman.disneyridetimecomparison.model
 
+import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventEntity
 import java.util.Objects
 
 class RideEvent {
@@ -44,6 +45,7 @@ class RideEvent {
     override fun hashCode(): Int {
         return Objects.hash(enteredLineTime, gotOnRideTime)
     }
+
 
     fun setRidePostedWaitTime(time: Int){
         if (time >= 0){
@@ -127,6 +129,33 @@ class RideEvent {
         }
 
         return apiToRideDifferenceInPercent
+    }
+
+    fun convertToRideEventEntity() :RideEventEntity {
+        return RideEventEntity(
+            rideId = rideId,
+            rideName = rideName,
+            enteredLineTime = enteredLineTime,
+            gotOnRideTime = gotOnRideTime,
+            apiPostedTimeForEvent =  apiPostedTime?: -1,
+            timeWaited = timeWaited?: -1,
+            hasInteractable = hasInteractable,
+            timeUntilInteractable = timeUntilInteractable?: -1
+        )
+    }
+
+    fun convertToRideEventEntityWithEventId() :RideEventEntity {
+        return RideEventEntity(
+            id = eventId,
+            rideId = rideId,
+            rideName = rideName,
+            enteredLineTime = enteredLineTime,
+            gotOnRideTime = gotOnRideTime,
+            apiPostedTimeForEvent =  apiPostedTime?: -1,
+            timeWaited = timeWaited?: -1,
+            hasInteractable = hasInteractable,
+            timeUntilInteractable = timeUntilInteractable?: -1
+        )
     }
 
 }

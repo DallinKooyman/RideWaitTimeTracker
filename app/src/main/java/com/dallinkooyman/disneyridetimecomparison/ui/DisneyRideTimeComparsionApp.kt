@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.R
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
+import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideViewModel
 
 enum class AppScreens {
     Home,

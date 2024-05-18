@@ -1,4 +1,4 @@
-package com.dallinkooyman.disneyridetimecomparison.ui
+package com.dallinkooyman.disneyridetimecomparison.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
