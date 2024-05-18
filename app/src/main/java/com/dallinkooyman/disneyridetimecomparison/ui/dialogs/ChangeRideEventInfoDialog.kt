@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -59,8 +60,8 @@ fun ChangeRideEventInfoDialog(
                 if (!updatedRideEvent.apiAndPostedTimeAreSame) {
                     RideIntEditAttributeBox(
                         attribute = stringResource(R.string.posted_time_when_entered),
-                        onValueChange = { updatedRideEvent.ridePostedWaitTime = it },
-                        attributeValue = updatedRideEvent.ridePostedWaitTime
+                        onValueChange = { updatedRideEvent.setRidePostedWaitTime(it) },
+                        attributeValue = updatedRideEvent.getRidePostedWaitTime()
                     )
                 }
                 RideIntEditAttributeBox(
@@ -77,8 +78,9 @@ fun ChangeRideEventInfoDialog(
                 }
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
                         onClick = { onDismiss() },
@@ -108,26 +110,24 @@ fun RideStringEditAttributeBox(
 ) {
     var text by rememberSaveable { mutableStateOf(attributeValue) }
     Box (
-        modifier = modifier
+        modifier = modifier.padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Column {
             Text(
                 text = attribute,
-                fontSize = 28.sp,
+                fontSize = 22.sp,
                 softWrap = true,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.weight(.5f)
+                modifier = Modifier.padding(bottom = 5.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = text,
                 onValueChange = {
                     text = it
                     onValueChange(it)
                 },
                 textStyle = TextStyle(fontSize = 22.sp),
-                modifier = Modifier.weight(.8f)
+//                modifier = Modifier.weight(.8f)
             )
         }
     }
@@ -145,19 +145,16 @@ fun RideIntEditAttributeBox(
         number = ""
     }
     Box (
-        modifier = modifier.padding(5.dp)
+        modifier = modifier.padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
     ){
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Column{
             Text(
                 text = "$attribute: ",
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 softWrap = true,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
+                textAlign = TextAlign.Start,
             )
-            TextField(
+            OutlinedTextField(
                 value = number,
                 onValueChange = {
                     number = it
@@ -168,8 +165,10 @@ fun RideIntEditAttributeBox(
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number
                 ),
-                textStyle = TextStyle(fontSize = 22.sp),
-                modifier = Modifier.weight(.4f)
+                textStyle = TextStyle(
+                    fontSize = 22.sp,
+                    textAlign = TextAlign.End
+                ),
             )
         }
     }

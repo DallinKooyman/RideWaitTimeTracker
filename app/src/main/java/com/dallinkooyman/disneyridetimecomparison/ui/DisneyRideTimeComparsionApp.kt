@@ -53,7 +53,7 @@ fun DisneyRideTimeComparisonApp(
                 HomeScreen(
                     ride = uiState.currentRideEvent,
                     onChangeRideEventInfo = {viewModel.updateCurrentRideEvent(it)},
-                    onOnRideButtonClicked = {
+                    onOnRideComfirmed = {
                         viewModel.updateCurrentRide(uiState.currentRide, uiState.currentRideEvent)
                     },
                     modifier = Modifier.fillMaxSize()
@@ -63,7 +63,7 @@ fun DisneyRideTimeComparisonApp(
                 HomeScreen(
                     ride = null,
                     onChangeRideEventInfo = {},
-                    onOnRideButtonClicked = {},
+                    onOnRideComfirmed = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -71,7 +71,7 @@ fun DisneyRideTimeComparisonApp(
                 HomeScreen(
                     ride = null,
                     onChangeRideEventInfo = {},
-                    onOnRideButtonClicked = {},
+                    onOnRideComfirmed = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }

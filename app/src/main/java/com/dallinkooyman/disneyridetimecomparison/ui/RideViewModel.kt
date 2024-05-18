@@ -1,7 +1,7 @@
 package com.dallinkooyman.disneyridetimecomparison.ui
 
 import androidx.lifecycle.ViewModel
-import com.dallinkooyman.disneyridetimecomparison.data.RideUiState
+import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.Ride
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import kotlinx.coroutines.flow.MutableStateFlow

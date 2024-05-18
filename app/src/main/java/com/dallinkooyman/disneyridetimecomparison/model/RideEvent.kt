@@ -4,11 +4,12 @@ import java.util.Objects
 
 class RideEvent {
 
+    var eventId: Int = -8
+    var rideId: String = ""
     var rideName: String = "Decked Out"
     var enteredLineTime: Long = 0L
-    var enteredRideTime: Long = 1L
+    var gotOnRideTime: Long = 1L
     var apiPostedTime: Int? = null
-    var ridePostedWaitTime: Int? = null
     var timeWaited: Int? = null
 
     var hasInteractable: Boolean = false
@@ -16,6 +17,8 @@ class RideEvent {
 
     //A fun stat to track
     var apiAndPostedTimeAreSame: Boolean = true
+
+    private var ridePostedWaitTime: Int? = null
 
     //A positive difference means the wait time was longer than the posted time
     private var apiDifferenceInMinutes: Int? = null
@@ -35,15 +38,26 @@ class RideEvent {
         if (other !is RideEvent){
             return false
         }
-        return this.enteredLineTime == other.enteredLineTime && this.enteredRideTime == other.enteredRideTime
+        return this.enteredLineTime == other.enteredLineTime && this.gotOnRideTime == other.gotOnRideTime
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(enteredLineTime, enteredRideTime)
+        return Objects.hash(enteredLineTime, gotOnRideTime)
+    }
+
+    fun setRidePostedWaitTime(time: Int){
+        if (time >= 0){
+            this.ridePostedWaitTime = time
+        }
+        apiAndPostedTimeAreSame = this.apiPostedTime == this.ridePostedWaitTime
+    }
+
+    fun getRidePostedWaitTime(): Int? {
+        return this.ridePostedWaitTime
     }
 
     fun validRideEvent(): Boolean {
-        return rideName != "Decked Out" && enteredLineTime > 0L && enteredRideTime >= 1L &&
+        return rideName != "Decked Out" && enteredLineTime > 0L && gotOnRideTime >= 1L &&
                 apiPostedTime != null && (apiAndPostedTimeAreSame || ridePostedWaitTime != null)
                 && timeWaited != null
     }

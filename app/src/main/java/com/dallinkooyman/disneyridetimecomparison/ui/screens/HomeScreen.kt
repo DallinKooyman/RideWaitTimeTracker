@@ -39,7 +39,7 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
 fun HomeScreen(
     ride: RideEvent?,
     onChangeRideEventInfo: (RideEvent) -> Unit,
-    onOnRideButtonClicked: () -> Unit,
+    onOnRideComfirmed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (ride == null){
@@ -49,7 +49,7 @@ fun HomeScreen(
         CurrentRideScreen(
             rideEvent = ride,
             onChangeRideEventInfo = onChangeRideEventInfo,
-            onOnRideButtonClicked = onOnRideButtonClicked,
+            onOnRideConfirm = onOnRideComfirmed,
             modifier = modifier)
     }
 }
@@ -59,10 +59,12 @@ fun HomeScreen(
 fun CurrentRideScreen(
     rideEvent: RideEvent,
     onChangeRideEventInfo: (RideEvent) -> Unit,
-    onOnRideButtonClicked: () -> Unit,
+    onOnRideConfirm: () -> Unit,
     modifier: Modifier
 ){
     val updatedRideEvent by remember { mutableStateOf(rideEvent)}
+    var showOnRideConfirmDialog by remember { mutableStateOf(false) }
+
     var showAtInteractableConfirmDialog by remember { mutableStateOf(false) }
 
     var showAtInteractableButton by remember {
@@ -90,7 +92,9 @@ fun CurrentRideScreen(
             onChangeRideInfoButtonClicked = {
                 showChangeRideEventInfoDialog = true
             },
-            onOnRideButtonClicked = onOnRideButtonClicked,
+            onOnRideButtonClicked = {
+                showOnRideConfirmDialog = true
+            },
             modifier = modifier
                 .weight(0.8F)
 
@@ -124,6 +128,18 @@ fun CurrentRideScreen(
             },
         )
     }
+    if (showOnRideConfirmDialog){
+        ConfirmDialog(
+            dialogTitle = "Are you getting on \n${updatedRideEvent.rideName}?",
+            supportingText = "Total Time waited: ${updatedRideEvent.timeWaited} minutes\n\n" +
+                    "Confirm only if you are next in line",
+            onDismiss = { showOnRideConfirmDialog = false },
+            onConfirm = {
+                onOnRideConfirm()
+                showOnRideConfirmDialog = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -147,7 +163,7 @@ fun RideAttributeBox(
             if (!rideEvent.apiAndPostedTimeAreSame) {
                 RideIntAttributeBox(
                     attribute = stringResource(R.string.posted_time_when_entered),
-                    value = rideEvent.ridePostedWaitTime
+                    value = rideEvent.getRidePostedWaitTime()
                 )
             }
             RideIntAttributeBox(
@@ -293,7 +309,7 @@ fun HomeScreenPreview() {
         HomeScreen(
             testRide,
             onChangeRideEventInfo = {},
-            onOnRideButtonClicked = {}
+            onOnRideComfirmed = {}
         )
     }
 }

@@ -37,11 +37,13 @@ fun ConfirmDialog(
                 Text(
                     text = dialogTitle,
                     textAlign = TextAlign.Center,
+                    lineHeight = 31.sp,
                     fontSize = 26.sp,
                     modifier = Modifier.fillMaxWidth().padding(20.dp)
                 )
                 Text (
                     text = supportingText,
+                    lineHeight = 15.sp,
                     modifier = Modifier.fillMaxWidth().padding(start = 10.dp ,end =  10.dp)
                 )
                 Row(
