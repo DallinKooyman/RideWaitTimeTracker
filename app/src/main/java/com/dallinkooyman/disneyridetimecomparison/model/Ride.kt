@@ -1,5 +1,7 @@
 package com.dallinkooyman.disneyridetimecomparison.model
 
+import com.dallinkooyman.disneyridetimecomparison.data.ride.RideEntity
+
 class Ride(private val rideName: String = "Decked Out") {
 
     var id: String = ""
@@ -34,6 +36,18 @@ class Ride(private val rideName: String = "Decked Out") {
 
     fun getTotalTimeUntilFirstInteractable(): Int? {
         return totalTimeUntilFirstInteractable
+    }
+
+    fun convertToRideEntity(): RideEntity {
+        return RideEntity(
+            id = id,
+            name = rideName,
+            totalWaitTime = totalWaitTime,
+            lat = lat,
+            longitude = long,
+            hasInteractable = hasInteractable,
+            totalTimeUntilFirstInteractable = totalTimeUntilFirstInteractable?: -1
+        )
     }
 
 }

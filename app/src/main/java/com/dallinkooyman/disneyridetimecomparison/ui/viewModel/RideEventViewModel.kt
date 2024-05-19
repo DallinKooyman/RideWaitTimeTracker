@@ -1,7 +1,7 @@
 package com.dallinkooyman.disneyridetimecomparison.ui.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventDao
+import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventRepository
 import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventUiState
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class RideEventViewModel(private val rideEventDao: RideEventDao): ViewModel() {
+class RideEventViewModel(private val rideEventRepository: RideEventRepository): ViewModel() {
 
     private val _uiState = MutableStateFlow(RideEventUiState())
     val uiState: StateFlow<RideEventUiState> = _uiState.asStateFlow()
@@ -24,24 +24,24 @@ class RideEventViewModel(private val rideEventDao: RideEventDao): ViewModel() {
     }
 
     private fun validateInput(): Boolean{
-        return uiState.value.currentRideEvent.validRideEvent();
+        return uiState.value.currentRideEvent?.validRideEvent() ?: false
     }
 
     suspend fun saveRideEvent(){
         if (validateInput()) {
-            rideEventDao.insert(uiState.value.currentRideEvent.convertToRideEventEntity())
+            rideEventRepository.insertRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntity())
         }
     }
 
     suspend fun updateRideEvent(){
         if (validateInput()) {
-            rideEventDao.insert(uiState.value.currentRideEvent.convertToRideEventEntityWithEventId())
+            rideEventRepository.updateRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntityWithEventId())
         }
     }
 
     suspend fun deleteRideEvent(){
         if (validateInput()){
-            rideEventDao.delete(uiState.value.currentRideEvent.convertToRideEventEntityWithEventId())
+            rideEventRepository.deleteRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntityWithEventId())
         }
     }
 

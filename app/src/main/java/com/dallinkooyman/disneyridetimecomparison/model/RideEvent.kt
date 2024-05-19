@@ -144,7 +144,7 @@ class RideEvent {
         )
     }
 
-    fun convertToRideEventEntityWithEventId() :RideEventEntity {
+    fun convertToRideEventEntityWithEventId(): RideEventEntity {
         return RideEventEntity(
             id = eventId,
             rideId = rideId,

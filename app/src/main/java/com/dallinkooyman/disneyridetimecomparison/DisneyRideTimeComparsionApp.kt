@@ -1,4 +1,4 @@
-package com.dallinkooyman.disneyridetimecomparison.ui
+package com.dallinkooyman.disneyridetimecomparison
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,7 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.dallinkooyman.disneyridetimecomparison.R
+import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
+import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideViewModel
@@ -33,7 +34,7 @@ enum class AppScreens {
 }
 @Composable
 fun DisneyRideTimeComparisonApp(
-    viewModel: RideViewModel = viewModel(),
+    viewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     Scaffold(
@@ -52,10 +53,10 @@ fun DisneyRideTimeComparisonApp(
         ) {
             composable(route = AppScreens.Home.name){
                 HomeScreen(
-                    ride = uiState.currentRideEvent,
-                    onChangeRideEventInfo = {viewModel.updateCurrentRideEvent(it)},
+                    ride = RideEvent(),
+                    onChangeRideEventInfo = {},
                     onOnRideComfirmed = {
-                        viewModel.updateCurrentRide(uiState.currentRide, uiState.currentRideEvent)
+                        viewModel.updateUiState(uiState.currentRide!!)
                     },
                     modifier = Modifier.fillMaxSize()
                 )
