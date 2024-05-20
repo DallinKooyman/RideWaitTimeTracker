@@ -37,7 +37,7 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 fun ChangeRideEventInfoDialog(
     currentRideEvent: RideEvent,
     onDismiss: () -> Unit,
-    onConfirm: (RideEvent) -> Unit,
+    onConfirm: () -> Unit,
 ) {
     val updatedRideEvent by remember { mutableStateOf(currentRideEvent)}
 
@@ -89,7 +89,7 @@ fun ChangeRideEventInfoDialog(
                         Text("Cancel")
                     }
                     TextButton(
-                        onClick = { onConfirm(updatedRideEvent) },
+                        onClick = onConfirm,
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text("Confirm")

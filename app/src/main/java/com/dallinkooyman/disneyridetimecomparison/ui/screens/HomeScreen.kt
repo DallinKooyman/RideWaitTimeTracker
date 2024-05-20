@@ -12,9 +12,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +25,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dallinkooyman.disneyridetimecomparison.R
+import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventUiState
+import com.dallinkooyman.disneyridetimecomparison.model.Ride
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
+import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ChangeRideEventInfoDialog
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ConfirmDialog
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
@@ -34,42 +40,41 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.onTertiaryContainerDa
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideEventViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
-    ride: RideEvent?,
-    onChangeRideEventInfo: (RideEvent) -> Unit,
-    onOnRideComfirmed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: RideEventViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    if (ride == null){
-        Text(text = "New Ride Page is under Construction")
-    }
-    else {
-        CurrentRideScreen(
-            rideEvent = ride,
-            onChangeRideEventInfo = onChangeRideEventInfo,
-            onOnRideConfirm = onOnRideComfirmed,
-            modifier = modifier)
-    }
+    val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    CurrentRideScreen(
+        uiState = uiState,
+        onChange = viewModel::updateUiState,
+        onConfirmedOnRide = {
+            coroutineScope.launch {
+                viewModel.saveRideEvent()
+            }
+        },
+        modifier = modifier
+    )
 }
 
 
 @Composable
 fun CurrentRideScreen(
-    rideEvent: RideEvent,
-    onChangeRideEventInfo: (RideEvent) -> Unit,
-    onOnRideConfirm: () -> Unit,
+    uiState: RideEventUiState,
+    onChange: (RideEvent) -> Unit,
+    onConfirmedOnRide: (RideEvent) -> Unit,
     modifier: Modifier
 ){
-    val updatedRideEvent by remember { mutableStateOf(rideEvent)}
     var showOnRideConfirmDialog by remember { mutableStateOf(false) }
 
     var showAtInteractableConfirmDialog by remember { mutableStateOf(false) }
-
-    var showAtInteractableButton by remember {
-        mutableStateOf(rideEvent.timeUntilInteractable == null)
-    }
 
     var showChangeRideEventInfoDialog by remember { mutableStateOf(false) }
 
@@ -78,13 +83,13 @@ fun CurrentRideScreen(
         modifier = Modifier.fillMaxSize(),
     ){
         RideAttributeBox(
-            rideEvent = rideEvent,
+            rideEvent = uiState.currentRideEvent,
             modifier = modifier
                 .weight(1F)
                 .padding(top = 35.dp, start = 35.dp)
         )
         ButtonBox(
-            showAtInteractableButton = showAtInteractableButton,
+            showAtInteractableButton = !uiState.currentRideEvent.hasInteractable,
             onAtInteractableButtonClicked = {
                 /* TODO: Calculate time till interactable */
                 showAtInteractableConfirmDialog = true
@@ -103,39 +108,39 @@ fun CurrentRideScreen(
     if (showAtInteractableConfirmDialog){
         ConfirmDialog(
             dialogTitle = stringResource(R.string.reached_interactable_dialog_title),
-            supportingText = "By confirming, ${updatedRideEvent.rideName} will now have an interactable. " +
+            supportingText = "By confirming, ${uiState.currentRideEvent.rideName} will now have an interactable. " +
                     "This will also set the time until interactable for this ride event " +
-                    "to ${updatedRideEvent.timeWaited} minutes.",
+                    "to ${uiState.currentRideEvent.timeWaited} minutes.",
             onDismiss = { showAtInteractableConfirmDialog = false },
             onConfirm = {
-                updatedRideEvent.hasInteractable = true
-                updatedRideEvent.timeUntilInteractable = updatedRideEvent.timeWaited
-                onChangeRideEventInfo(updatedRideEvent)
+                uiState.currentRideEvent.hasInteractable = true
+                uiState.currentRideEvent.timeUntilInteractable = uiState.currentRideEvent.timeWaited
                 showAtInteractableConfirmDialog = false
-                showAtInteractableButton = false
+                onChange(uiState.currentRideEvent)
             }
         )
     }
     if (showChangeRideEventInfoDialog){
         ChangeRideEventInfoDialog(
-            currentRideEvent = rideEvent,
+            currentRideEvent = uiState.currentRideEvent,
             onDismiss = {
                 showChangeRideEventInfoDialog = false
             },
-            onConfirm = { event: RideEvent ->
+            onConfirm = {
                 showChangeRideEventInfoDialog = false
-                onChangeRideEventInfo(event)
+                onChange(uiState.currentRideEvent)
             },
         )
     }
     if (showOnRideConfirmDialog){
         ConfirmDialog(
-            dialogTitle = "Are you getting on \n${updatedRideEvent.rideName}?",
-            supportingText = "Total Time waited: ${updatedRideEvent.timeWaited} minutes\n\n" +
+            dialogTitle = "Are you getting on \n${uiState.currentRideEvent.rideName}?",
+            supportingText = "Total Time waited: ${uiState.currentRideEvent.timeWaited} minutes\n\n" +
                     "Confirm only if you are next in line",
             onDismiss = { showOnRideConfirmDialog = false },
             onConfirm = {
-                onOnRideConfirm()
+                uiState.currentRideEvent.gotOnRideTime = System.currentTimeMillis() / 1000
+                onConfirmedOnRide(uiState.currentRideEvent)
                 showOnRideConfirmDialog = false
             }
         )
@@ -303,13 +308,13 @@ fun ButtonBox(
 
 @Preview
 @Composable
-fun HomeScreenPreview() {
-    val testRide = RideEvent()
+fun CurrentRideScreenPreview() {
     AppTheme {
-        HomeScreen(
-            testRide,
-            onChangeRideEventInfo = {},
-            onOnRideComfirmed = {}
+        CurrentRideScreen(
+            uiState = RideEventUiState(RideEvent()),
+            onChange = {},
+            onConfirmedOnRide = {},
+            modifier = Modifier
         )
     }
 }

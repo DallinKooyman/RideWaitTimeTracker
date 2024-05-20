@@ -3,13 +3,13 @@ package com.dallinkooyman.disneyridetimecomparison.model
 import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventEntity
 import java.util.Objects
 
-class RideEvent {
+class RideEvent() {
 
     var eventId: Int = -8
     var rideId: String = ""
     var rideName: String = "Decked Out"
-    var enteredLineTime: Long = 0L
-    var gotOnRideTime: Long = 1L
+    var enteredLineTime: Long = 2L
+    var gotOnRideTime: Long = 3L
     var apiPostedTime: Int? = null
     var timeWaited: Int? = null
 
@@ -34,6 +34,30 @@ class RideEvent {
 
     //A percent > 100 means that the ride time was longer than the API
     private var apiToRideDifferenceInPercent: Double? = null
+
+    constructor(
+        eventId: Int,
+        rideId: String,
+        rideName: String,
+        enteredLineTime: Long,
+        gotOnRideTime: Long,
+        apiPostedTime: Int?,
+        timeWaited: Int?,
+        hasInteractable: Boolean,
+        timeUntilInteractable: Int?,
+        apiAndPostedTimeAreSame: Boolean
+    ) : this() {
+        this.eventId = eventId
+        this.rideId = rideId
+        this.rideName = rideName
+        this.enteredLineTime = enteredLineTime
+        this.gotOnRideTime = gotOnRideTime
+        this.apiPostedTime = apiPostedTime
+        this.timeWaited = timeWaited
+        this.hasInteractable = hasInteractable
+        this.timeUntilInteractable = timeUntilInteractable
+        this.apiAndPostedTimeAreSame = apiAndPostedTimeAreSame
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other !is RideEvent){

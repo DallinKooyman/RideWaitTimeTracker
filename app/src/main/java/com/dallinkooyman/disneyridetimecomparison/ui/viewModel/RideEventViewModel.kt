@@ -24,24 +24,24 @@ class RideEventViewModel(private val rideEventRepository: RideEventRepository): 
     }
 
     private fun validateInput(): Boolean{
-        return uiState.value.currentRideEvent?.validRideEvent() ?: false
+        return uiState.value.currentRideEvent.validRideEvent()
     }
 
     suspend fun saveRideEvent(){
         if (validateInput()) {
-            rideEventRepository.insertRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntity())
+            rideEventRepository.insertRideEvent(uiState.value.currentRideEvent.convertToRideEventEntity())
         }
     }
 
     suspend fun updateRideEvent(){
         if (validateInput()) {
-            rideEventRepository.updateRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntityWithEventId())
+            rideEventRepository.updateRideEvent(uiState.value.currentRideEvent.convertToRideEventEntityWithEventId())
         }
     }
 
     suspend fun deleteRideEvent(){
         if (validateInput()){
-            rideEventRepository.deleteRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntityWithEventId())
+            rideEventRepository.deleteRideEvent(uiState.value.currentRideEvent.convertToRideEventEntityWithEventId())
         }
     }
 

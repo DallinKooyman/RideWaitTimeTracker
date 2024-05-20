@@ -25,6 +25,7 @@ import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
+import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideEventViewModel
 import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideViewModel
 
 enum class AppScreens {
@@ -34,7 +35,6 @@ enum class AppScreens {
 }
 @Composable
 fun DisneyRideTimeComparisonApp(
-    viewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     Scaffold(
@@ -44,7 +44,6 @@ fun DisneyRideTimeComparisonApp(
             )
         }
     ) { innerPadding ->
-        val uiState by viewModel.uiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -53,27 +52,16 @@ fun DisneyRideTimeComparisonApp(
         ) {
             composable(route = AppScreens.Home.name){
                 HomeScreen(
-                    ride = RideEvent(),
-                    onChangeRideEventInfo = {},
-                    onOnRideComfirmed = {
-                        viewModel.updateUiState(uiState.currentRide!!)
-                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = AppScreens.Stats.name){
                 HomeScreen(
-                    ride = null,
-                    onChangeRideEventInfo = {},
-                    onOnRideComfirmed = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = AppScreens.History.name){
                 HomeScreen(
-                    ride = null,
-                    onChangeRideEventInfo = {},
-                    onOnRideComfirmed = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }
