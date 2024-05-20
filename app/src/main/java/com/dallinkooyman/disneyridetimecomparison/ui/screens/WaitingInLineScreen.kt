@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallinkooyman.disneyridetimecomparison.R
@@ -55,6 +56,8 @@ fun WaitingInLineScreen(
     ){
         RideAttributeBox(
             rideEvent = uiState.currentRideEvent,
+            headlineFontSize = 32.sp,
+            contentFontSize = 20.sp,
             modifier = modifier
                 .weight(1F)
                 .padding(top = 35.dp, start = 35.dp)
@@ -121,6 +124,8 @@ fun WaitingInLineScreen(
 @Composable
 fun RideAttributeBox(
     rideEvent: RideEvent,
+    headlineFontSize: TextUnit,
+    contentFontSize: TextUnit,
     modifier: Modifier
 ){
     Box (
@@ -131,24 +136,29 @@ fun RideAttributeBox(
             RideStringAttributeBox(
                 attribute = stringResource(R.string.ride_string),
                 value = rideEvent.rideName,
+                fontSize = headlineFontSize
             )
             RideIntAttributeBox(
                 attribute = stringResource(R.string.api_wait_time_when_entered),
+                fontSize = contentFontSize,
                 value = rideEvent.apiPostedTime
             )
             if (!rideEvent.apiAndPostedTimeAreSame) {
                 RideIntAttributeBox(
                     attribute = stringResource(R.string.posted_time_when_entered),
+                    fontSize = contentFontSize,
                     value = rideEvent.getRidePostedWaitTime()
                 )
             }
             RideIntAttributeBox(
                 attribute = stringResource(R.string.total_waiting_time),
+                fontSize = contentFontSize,
                 value = rideEvent.timeWaited
             )
             if (rideEvent.hasInteractable) {
                 RideIntAttributeBox(
                     attribute = stringResource(R.string.time_waited_to_the_first_interactable),
+                    fontSize = contentFontSize,
                     value = rideEvent.timeUntilInteractable
                 )
             }
@@ -160,6 +170,7 @@ fun RideAttributeBox(
 fun RideStringAttributeBox(
     attribute: String,
     value: String,
+    fontSize: TextUnit,
     modifier: Modifier = Modifier
 ) {
     Box (
@@ -168,12 +179,12 @@ fun RideStringAttributeBox(
         Row {
             Text(
                 text = "$attribute: ",
-                fontSize = 32.sp
+                fontSize = fontSize
             )
 
             Text(
                 text = value,
-                fontSize = 32.sp
+                fontSize = fontSize
             )
         }
     }
@@ -184,6 +195,7 @@ fun RideStringAttributeBox(
 fun RideIntAttributeBox(
     attribute: String,
     value: Int?,
+    fontSize: TextUnit,
     modifier: Modifier = Modifier
 ) {
     val displayString = value?.toString() ?: ""
@@ -193,11 +205,11 @@ fun RideIntAttributeBox(
         Row {
             Text(
                 text = "$attribute: ",
-                fontSize = 20.sp
+                fontSize = fontSize
             )
             Text(
                 text = displayString,
-                fontSize = 20.sp
+                fontSize = fontSize
             )
         }
     }
@@ -294,6 +306,6 @@ fun CurrentRideScreenPreview() {
 @Composable
 fun AttributeBoxPreview() {
     AppTheme {
-        RideStringAttributeBox("Ride Name", "Decked Out")
+        RideStringAttributeBox("Ride Name", "Decked Out", 32.sp)
     }
 }
