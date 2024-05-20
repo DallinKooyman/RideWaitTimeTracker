@@ -27,8 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dallinkooyman.disneyridetimecomparison.R
-import com.dallinkooyman.disneyridetimecomparison.data.rideEvent.RideEventUiState
-import com.dallinkooyman.disneyridetimecomparison.model.Ride
+import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ChangeRideEventInfoDialog
@@ -40,21 +39,20 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.onTertiaryContainerDa
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
-import com.dallinkooyman.disneyridetimecomparison.ui.viewModel.RideEventViewModel
-import kotlinx.coroutines.coroutineScope
+import com.dallinkooyman.disneyridetimecomparison.ui.RideViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: RideEventViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-
-    CurrentRideScreen(
+    
+    WaitingInLineScreen(
         uiState = uiState,
-        onChange = viewModel::updateUiState,
+        onChange = viewModel::updateRideEventInUiState,
         onConfirmedOnRide = {
             coroutineScope.launch {
                 viewModel.saveRideEvent()
@@ -66,8 +64,8 @@ fun HomeScreen(
 
 
 @Composable
-fun CurrentRideScreen(
-    uiState: RideEventUiState,
+fun WaitingInLineScreen(
+    uiState: RideUiState,
     onChange: (RideEvent) -> Unit,
     onConfirmedOnRide: (RideEvent) -> Unit,
     modifier: Modifier
@@ -310,8 +308,8 @@ fun ButtonBox(
 @Composable
 fun CurrentRideScreenPreview() {
     AppTheme {
-        CurrentRideScreen(
-            uiState = RideEventUiState(RideEvent()),
+        WaitingInLineScreen(
+            uiState = RideUiState(),
             onChange = {},
             onConfirmedOnRide = {},
             modifier = Modifier
