@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,13 +31,21 @@ import androidx.compose.ui.unit.sp
 import com.dallinkooyman.disneyridetimecomparison.R
 import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.Ride
+import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
+import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ConfirmDialog
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.RideIntEditAttributeBox
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.RideStringEditAttributeBox
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.errorContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.errorContainerDarkHighContrast
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.onErrorContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.onPrimaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.onSecondaryContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.surfaceContainerHighDark
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 
 @Composable
@@ -44,6 +53,7 @@ fun GettingInLineScreen(
     uiState: RideUiState,
     allRides: List<Ride>,
     updateStateCurrentRide: (Ride?) -> Unit,
+    onConfirmInLine: (RideEvent) -> Unit,
     modifier: Modifier
 ) {
 
@@ -90,11 +100,76 @@ fun GettingInLineScreen(
 
             //TODO: make call to API to get ride posted wait time
 
+            val rideEvent by remember { mutableStateOf(RideEvent())}
+            rideEvent.rideName = uiState.currentRide!!.rideName
+            rideEvent.rideId = uiState.currentRide!!.id
+            rideEvent.apiPostedTime = null
+
+            var showConfirmRideEventDialog by rememberSaveable { mutableStateOf(false)}
+            var showCancelRideEventDialog by rememberSaveable { mutableStateOf(false)}
+
             RideEventInfo(
                 currentRide = uiState.currentRide!!,
-                onDismiss = { updateStateCurrentRide(null) },
-                onConfirm = {}
+                rideEvent = rideEvent
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, start = 15.dp, end = 15.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Button(
+                    onClick = {
+                              showCancelRideEventDialog = true
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = errorContainerDarkHighContrast,
+                        contentColor = errorContainerDark
+                    ),
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .weight(.5f),
+                ) {
+                    Text(
+                        text = "Cancel",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                              showConfirmRideEventDialog = true
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primaryContainerDark,
+                        contentColor = onPrimaryContainerDark
+                    ),
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .weight(.5f),
+                ) {
+                    Text(
+                        text = "Confirm",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+
+            if (showConfirmRideEventDialog){
+                ConfirmDialog(
+                    dialogTitle = "Getting in line for ${rideEvent.rideName}?",
+                    supportingText = "By pressing you confirm you are stepping in line for" +
+                            " ${rideEvent.rideName} at ${LocalDate.now()}",
+                    onDismiss = { showConfirmRideEventDialog = false },
+                    onConfirm = {
+                        rideEvent.enteredLineTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
+                        rideEvent.apiPostedTime = uiState.currentRide!!.apiWaitTime
+                        rideEvent.hasInteractable = uiState.currentRide!!.hasInteractable
+                        onConfirmInLine(rideEvent)
+                    }
+                )
+            }
         }
     }
 }
@@ -102,24 +177,24 @@ fun GettingInLineScreen(
 @Composable
 fun RideEventInfo(
     currentRide: Ride,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
+    rideEvent: RideEvent
 ) {
     val updatedRide by remember { mutableStateOf(currentRide)}
+
     Card (
         colors = CardColors(surfaceContainerHighDark, onSecondaryContainerDark, errorContainerDark, onErrorContainerDark),
-        modifier = Modifier.padding(top = 100.dp, start = 20.dp, end = 20.dp)
+        modifier = Modifier.padding(top = 70.dp, start = 20.dp, end = 20.dp)
     ) {
         Column (
-            modifier = Modifier.padding(top = 5.dp)
+            modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
         ) {
             RideStringEditAttributeBox(
                 attribute = stringResource(R.string.ride_string),
-                onValueChange = { updatedRide.rideName = it },
+                onValueChange = {},
                 attributeValue = updatedRide.rideName,
                 attributeFontSize = 23.sp,
                 attributeValueFontSize = 20.sp,
-                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
             RideIntEditAttributeBox(
                 attribute = stringResource(R.string.api_wait_time),
@@ -127,36 +202,25 @@ fun RideEventInfo(
                 onValueChange = {},
                 attributeFontSize = 20.sp,
                 attributeValueFontSize = 18.sp,
-                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(top = 5.dp)
+                    .fillMaxWidth()
             )
             RideIntEditAttributeBox(
                 attribute = stringResource(R.string.posted_time_when_entered),
-                onValueChange = {  },
-                attributeValue = null,
+                onValueChange = {
+                    if (it != -99){
+                        rideEvent.setRidePostedWaitTime(it)
+                    }
+                },
+                attributeValue = rideEvent.apiPostedTime,
                 attributeFontSize = 20.sp,
                 attributeValueFontSize = 18.sp,
                 readOnly = false,
-                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
-            )
-
-            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                TextButton(
-                    onClick = { onDismiss() },
-                    modifier = Modifier.padding(8.dp),
-                ) {
-                    Text("Cancel")
-                }
-                TextButton(
-                    onClick = onConfirm,
-                    modifier = Modifier.padding(8.dp),
-                ) {
-                    Text("Confirm")
-                }
-            }
+                    .padding(top = 5.dp, bottom = 5.dp)
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -237,6 +301,7 @@ fun GettingInLineScreenPreview(){
             uiState = RideUiState(),
             updateStateCurrentRide = { Ride() },
             allRides = listOf(),
+            onConfirmInLine = {},
             modifier = Modifier
         )
     }
