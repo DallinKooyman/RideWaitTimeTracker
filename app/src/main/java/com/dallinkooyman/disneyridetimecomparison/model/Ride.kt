@@ -2,13 +2,15 @@ package com.dallinkooyman.disneyridetimecomparison.model
 
 import com.dallinkooyman.disneyridetimecomparison.data.ride.RideEntity
 
-class Ride(private val rideName: String = "Decked Out") {
+class Ride() {
 
     var id: String = ""
+    var rideName: String = "Decked Out"
     var apiWaitTime: Int = -1
     var totalWaitTime: Int = -3
-    var lat: Double = 1000.0
-    var long: Double = 2000.0
+    var latitude: Double = 1000.0
+    var longitude: Double = 2000.0
+    var parentId: String = ""
 
     //A fun stat to track, not all rides have them
     var hasInteractable: Boolean = false
@@ -34,6 +36,9 @@ class Ride(private val rideName: String = "Decked Out") {
         return rideHistory
     }
 
+    fun setTotalTimeUntilFirstInteractable(time: Int) {
+        totalTimeUntilFirstInteractable = time
+    }
     fun getTotalTimeUntilFirstInteractable(): Int? {
         return totalTimeUntilFirstInteractable
     }
@@ -43,9 +48,10 @@ class Ride(private val rideName: String = "Decked Out") {
             id = id,
             name = rideName,
             totalWaitTime = totalWaitTime,
-            lat = lat,
-            longitude = long,
-            hasInteractable = hasInteractable,
+            latitude = latitude,
+            longitude = longitude,
+            hasInteractable = if (hasInteractable) 0 else 1,
+            parentId = parentId,
             totalTimeUntilFirstInteractable = totalTimeUntilFirstInteractable?: -1
         )
     }

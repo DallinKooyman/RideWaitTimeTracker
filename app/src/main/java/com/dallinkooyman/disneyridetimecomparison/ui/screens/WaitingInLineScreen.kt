@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallinkooyman.disneyridetimecomparison.R
-import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ChangeRideEventInfoDialog
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.ConfirmDialog
@@ -39,7 +38,7 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
 
 @Composable
 fun WaitingInLineScreen(
-    uiState: RideUiState,
+    rideEvent: RideEvent,
     onChange: (RideEvent) -> Unit,
     onConfirmedOnRide: (RideEvent) -> Unit,
     modifier: Modifier
@@ -54,8 +53,8 @@ fun WaitingInLineScreen(
     Column (
         modifier = Modifier.fillMaxSize(),
     ){
-        RideAttributeBox(
-            rideEvent = uiState.currentRideEvent,
+        RideEventAttributeBox(
+            rideEvent = rideEvent,
             headlineFontSize = 32.sp,
             contentFontSize = 20.sp,
             modifier = modifier
@@ -63,7 +62,7 @@ fun WaitingInLineScreen(
                 .padding(top = 35.dp, start = 35.dp)
         )
         ButtonBox(
-            showAtInteractableButton = !uiState.currentRideEvent.hasInteractable,
+            showAtInteractableButton = !rideEvent.hasInteractable,
             onAtInteractableButtonClicked = {
                 /* TODO: Calculate time till interactable */
                 showAtInteractableConfirmDialog = true
@@ -82,39 +81,39 @@ fun WaitingInLineScreen(
     if (showAtInteractableConfirmDialog){
         ConfirmDialog(
             dialogTitle = stringResource(R.string.reached_interactable_dialog_title),
-            supportingText = "By confirming, ${uiState.currentRideEvent.rideName} will now have an interactable. " +
+            supportingText = "By confirming, ${rideEvent.rideName} will now have an interactable. " +
                     "This will also set the time until interactable for this ride event " +
-                    "to ${uiState.currentRideEvent.timeWaited} minutes.",
+                    "to ${rideEvent.timeWaited} minutes.",
             onDismiss = { showAtInteractableConfirmDialog = false },
             onConfirm = {
-                uiState.currentRideEvent.hasInteractable = true
-                uiState.currentRideEvent.timeUntilInteractable = uiState.currentRideEvent.timeWaited
+                rideEvent.hasInteractable = true
+                rideEvent.timeUntilInteractable = rideEvent.timeWaited
                 showAtInteractableConfirmDialog = false
-                onChange(uiState.currentRideEvent)
+                onChange(rideEvent)
             }
         )
     }
     if (showChangeRideEventInfoDialog){
         ChangeRideEventInfoDialog(
-            currentRideEvent = uiState.currentRideEvent,
+            currentRideEvent = rideEvent,
             onDismiss = {
                 showChangeRideEventInfoDialog = false
             },
             onConfirm = {
                 showChangeRideEventInfoDialog = false
-                onChange(uiState.currentRideEvent)
+                onChange(rideEvent)
             },
         )
     }
     if (showOnRideConfirmDialog){
         ConfirmDialog(
-            dialogTitle = "Are you getting on \n${uiState.currentRideEvent.rideName}?",
-            supportingText = "Total Time waited: ${uiState.currentRideEvent.timeWaited} minutes\n\n" +
+            dialogTitle = "Are you getting on \n${rideEvent.rideName}?",
+            supportingText = "Total Time waited: ${rideEvent.timeWaited} minutes\n\n" +
                     "Confirm only if you are next in line",
             onDismiss = { showOnRideConfirmDialog = false },
             onConfirm = {
-                uiState.currentRideEvent.gotOnRideTime = System.currentTimeMillis() / 1000
-                onConfirmedOnRide(uiState.currentRideEvent)
+                rideEvent.gotOnRideTime = System.currentTimeMillis() / 1000
+                onConfirmedOnRide(rideEvent)
                 showOnRideConfirmDialog = false
             }
         )
@@ -122,7 +121,7 @@ fun WaitingInLineScreen(
 }
 
 @Composable
-fun RideAttributeBox(
+fun RideEventAttributeBox(
     rideEvent: RideEvent,
     headlineFontSize: TextUnit,
     contentFontSize: TextUnit,
@@ -294,7 +293,7 @@ fun ButtonBox(
 fun CurrentRideScreenPreview() {
     AppTheme {
         WaitingInLineScreen(
-            uiState = RideUiState(),
+            rideEvent = RideEvent(),
             onChange = {},
             onConfirmedOnRide = {},
             modifier = Modifier

@@ -18,12 +18,19 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    if (uiState.currentRide == null){
-        GettingInLineScreen(modifier = modifier)
+    val rideEvent = uiState.currentRideEvent
+
+    if (rideEvent == null){
+        GettingInLineScreen(
+            uiState = uiState,
+            allRides = uiState.allRides,
+            updateStateCurrentRide = viewModel::updateCurrentRideInUiState,
+            modifier = modifier
+        )
     }
     else {
         WaitingInLineScreen(
-            uiState = uiState,
+            rideEvent = rideEvent,
             onChange = viewModel::updateRideEventInUiState,
             onConfirmedOnRide = {
                 coroutineScope.launch {

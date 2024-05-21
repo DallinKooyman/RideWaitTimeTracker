@@ -8,6 +8,10 @@ class RideRepository(private val rideDao: RideDao) {
 
     suspend fun updateRide(rideEntity: RideEntity) = rideDao.insert(rideEntity)
 
-    fun getRide(id: Int) = rideDao.getRide(id)
+    suspend fun getRide(id: Int) = rideDao.getRide(id)
+
+    suspend fun getRideByName(name: String) = rideDao.getRideByName(name)
+
+    fun getAllRides() = rideDao.getAllRides()
 
 }

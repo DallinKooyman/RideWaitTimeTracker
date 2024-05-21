@@ -22,4 +22,10 @@ interface RideDao {
     @Query("Select * from rides where id = :id")
     fun getRide(id: Int): Flow<RideEntity>
 
+    @Query("Select * from rides where name = :name")
+    fun getRideByName(name: String): Flow<RideEntity?>
+
+    @Query("Select * from rides")
+    fun getAllRides(): Flow<List<RideEntity>>
+
 }

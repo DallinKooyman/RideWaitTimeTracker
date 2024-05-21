@@ -18,6 +18,7 @@ abstract class RideDatabase : RoomDatabase() {
             return Instance ?: synchronized(this){
                 Room.databaseBuilder(context, RideDatabase::class.java, "ride_database")
                     .fallbackToDestructiveMigration()
+                    .createFromAsset("ride_database.db")
                     .build()
                     .also { Instance = it }
             }

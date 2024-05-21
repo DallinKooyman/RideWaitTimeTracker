@@ -4,6 +4,7 @@ import com.dallinkooyman.disneyridetimecomparison.model.Ride
 import com.dallinkooyman.disneyridetimecomparison.model.RideEvent
 
 data class RideUiState(
-    val currentRide: Ride? = null,
-    val currentRideEvent: RideEvent = RideEvent()
+    var currentRide: Ride? = null,
+    var currentRideEvent: RideEvent? = null,
+    var allRides: List<Ride> = listOf()
 )
