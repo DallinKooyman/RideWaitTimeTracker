@@ -12,4 +12,5 @@
     <string name="on_ride_button_text">On Ride</string>
     <string name="at_interactable_button_text">At Interactable</string>
     <string name="reached_interactable_dialog_title">Reached interactable?</string>
+    <string name="api_wait_time">Api Wait Time</string>
 </resources>

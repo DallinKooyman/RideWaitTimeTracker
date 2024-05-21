@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.SearchBar
@@ -25,11 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dallinkooyman.disneyridetimecomparison.R
 import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.Ride
+import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.RideIntEditAttributeBox
 import com.dallinkooyman.disneyridetimecomparison.ui.dialogs.RideStringEditAttributeBox
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.errorContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.onErrorContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.onSecondaryContainerDark
+import com.dallinkooyman.disneyridetimecomparison.ui.theme.surfaceContainerHighDark
 
 
 @Composable
@@ -48,7 +55,7 @@ fun GettingInLineScreen(
 
     Column (
         modifier = modifier
-            .padding(top = 40.dp)
+            .padding(top = 10.dp)
             .fillMaxWidth()
     ){
         SearchBar(
@@ -64,7 +71,7 @@ fun GettingInLineScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
-                .padding(start = 15.dp, end = 15.dp)
+                .padding(start = 20.dp, end = 20.dp)
         ) {
             filteredRides.forEach {
                 ListItem(
@@ -99,28 +106,42 @@ fun RideEventInfo(
     onConfirm: () -> Unit,
 ) {
     val updatedRide by remember { mutableStateOf(currentRide)}
-    Card {
-        Column {
+    Card (
+        colors = CardColors(surfaceContainerHighDark, onSecondaryContainerDark, errorContainerDark, onErrorContainerDark),
+        modifier = Modifier.padding(top = 100.dp, start = 20.dp, end = 20.dp)
+    ) {
+        Column (
+            modifier = Modifier.padding(top = 5.dp)
+        ) {
             RideStringEditAttributeBox(
                 attribute = stringResource(R.string.ride_string),
                 onValueChange = { updatedRide.rideName = it },
                 attributeValue = updatedRide.rideName,
+                attributeFontSize = 23.sp,
+                attributeValueFontSize = 20.sp,
+                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
             )
-//            RideIntEditAttributeBox(
-//                attribute = stringResource(R.string.api_wait_time_when_entered),
-//                onValueChange = { updatedRide.apiPostedTime = it },
-//                attributeValue = updatedRide.apiPostedTime
-//            )
-//            RideIntEditAttributeBox(
-//                attribute = stringResource(R.string.posted_time_when_entered),
-//                onValueChange = { updatedRide.setRidePostedWaitTime(it) },
-//                attributeValue = updatedRide.getRidePostedWaitTime()
-//            )
+            RideIntEditAttributeBox(
+                attribute = stringResource(R.string.api_wait_time),
+                attributeValue = 0, //TODO Get Api wait time
+                onValueChange = {},
+                attributeFontSize = 20.sp,
+                attributeValueFontSize = 18.sp,
+                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
+            )
+            RideIntEditAttributeBox(
+                attribute = stringResource(R.string.posted_time_when_entered),
+                onValueChange = {  },
+                attributeValue = null,
+                attributeFontSize = 20.sp,
+                attributeValueFontSize = 18.sp,
+                readOnly = false,
+                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
+            )
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
                 TextButton(

@@ -11,20 +11,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -50,30 +49,45 @@ fun ChangeRideEventInfoDialog(
                 RideStringEditAttributeBox(
                     attribute = stringResource(R.string.ride_string),
                     onValueChange = { updatedRideEvent.rideName = it },
+                    attributeFontSize = 24.sp,
+                    attributeValueFontSize = 22.sp,
                     attributeValue = updatedRideEvent.rideName,
+                    readOnly = false
                 )
                 RideIntEditAttributeBox(
                     attribute = stringResource(R.string.api_wait_time_when_entered),
                     onValueChange = { updatedRideEvent.apiPostedTime = it },
-                    attributeValue = updatedRideEvent.apiPostedTime
+                    attributeValue = updatedRideEvent.apiPostedTime,
+                    attributeFontSize = 18.sp,
+                    attributeValueFontSize = 22.sp,
+                    readOnly = false
                 )
                 if (!updatedRideEvent.apiAndPostedTimeAreSame) {
                     RideIntEditAttributeBox(
                         attribute = stringResource(R.string.posted_time_when_entered),
                         onValueChange = { updatedRideEvent.setRidePostedWaitTime(it) },
-                        attributeValue = updatedRideEvent.getRidePostedWaitTime()
+                        attributeValue = updatedRideEvent.getRidePostedWaitTime(),
+                        attributeFontSize = 18.sp,
+                        attributeValueFontSize = 22.sp,
+                        readOnly = false
                     )
                 }
                 RideIntEditAttributeBox(
                     attribute = stringResource(R.string.total_waiting_time),
                     onValueChange = { updatedRideEvent.timeWaited = it },
-                    attributeValue = updatedRideEvent.timeWaited
+                    attributeValue = updatedRideEvent.timeWaited,
+                    attributeFontSize = 18.sp,
+                    attributeValueFontSize = 22.sp,
+                    readOnly = false
                 )
                 if (updatedRideEvent.hasInteractable) {
                     RideIntEditAttributeBox(
                         attribute = stringResource(R.string.time_waited_to_the_first_interactable),
                         onValueChange = { updatedRideEvent.timeUntilInteractable = it },
-                        attributeValue = updatedRideEvent.timeUntilInteractable
+                        attributeValue = updatedRideEvent.timeUntilInteractable,
+                        attributeFontSize = 18.sp,
+                        attributeValueFontSize = 22.sp,
+                        readOnly = false
                     )
                 }
                 Row(
@@ -105,8 +119,11 @@ fun ChangeRideEventInfoDialog(
 fun RideStringEditAttributeBox(
     attribute: String,
     onValueChange: (String) -> Unit,
+    attributeFontSize: TextUnit,
+    attributeValueFontSize: TextUnit,
     attributeValue: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    readOnly: Boolean = true
 ) {
     var text by rememberSaveable { mutableStateOf(attributeValue) }
     Box (
@@ -114,20 +131,21 @@ fun RideStringEditAttributeBox(
     ) {
         Column {
             Text(
-                text = attribute,
-                fontSize = 22.sp,
+                text = "$attribute: ",
+                fontSize = attributeFontSize,
                 softWrap = true,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 5.dp)
             )
             OutlinedTextField(
                 value = text,
+                readOnly = readOnly,
                 onValueChange = {
                     text = it
                     onValueChange(it)
                 },
-                textStyle = TextStyle(fontSize = 22.sp),
-//                modifier = Modifier.weight(.8f)
+                textStyle = TextStyle(fontSize = attributeValueFontSize),
+                modifier = Modifier.padding(top = 5.dp).fillMaxWidth()
             )
         }
     }
@@ -138,7 +156,10 @@ fun RideIntEditAttributeBox(
     attribute: String,
     attributeValue: Int?,
     onValueChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    attributeFontSize: TextUnit,
+    attributeValueFontSize: TextUnit,
+    modifier: Modifier = Modifier,
+    readOnly: Boolean = true,
 ) {
     var number by rememberSaveable { mutableStateOf(attributeValue.toString()) }
     if (number == "null"){
@@ -150,12 +171,14 @@ fun RideIntEditAttributeBox(
         Column{
             Text(
                 text = "$attribute: ",
-                fontSize = 18.sp,
+                fontSize = attributeFontSize,
                 softWrap = true,
                 textAlign = TextAlign.Start,
+                modifier = Modifier.padding(bottom = 5.dp)
             )
             OutlinedTextField(
                 value = number,
+                readOnly = readOnly,
                 onValueChange = {
                     number = it
                     if (it.isEmpty() || it.toIntOrNull() != null){
@@ -166,9 +189,10 @@ fun RideIntEditAttributeBox(
                     keyboardType = KeyboardType.Number
                 ),
                 textStyle = TextStyle(
-                    fontSize = 22.sp,
+                    fontSize = attributeValueFontSize,
                     textAlign = TextAlign.End
                 ),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
