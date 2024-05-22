@@ -1,5 +1,11 @@
 package com.dallinkooyman.disneyridetimecomparison
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,12 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
+import com.dallinkooyman.disneyridetimecomparison.ui.RideViewModel
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
+import com.dallinkooyman.disneyridetimecomparison.ui.screens.RideHistoryScreen
+import com.dallinkooyman.disneyridetimecomparison.ui.screens.StatsScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.AppTheme
 
 enum class AppScreens {
@@ -38,24 +49,110 @@ fun DisneyRideTimeComparisonApp(
             )
         }
     ) { innerPadding ->
-
+        val rideViewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory)
+        val transitionTime = 150
         NavHost(
             navController = navController,
             startDestination = AppScreens.Home.name,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
         ) {
-            composable(route = AppScreens.Home.name){
+            composable(
+                route = AppScreens.Home.name,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        AppScreens.Stats.name -> slideInHorizontally(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            initialOffsetX = {it}
+                        )
+                        AppScreens.History.name -> slideInHorizontally(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            initialOffsetX = {-it}
+                        )
+
+                        else -> slideInVertically(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            initialOffsetY = {it}
+                        )
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        AppScreens.Stats.name -> slideOutHorizontally(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            targetOffsetX = {it}
+                        )
+                        AppScreens.History.name -> slideOutHorizontally(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            targetOffsetX = {-it}
+                        )
+
+                        else -> slideOutVertically(
+                            animationSpec = tween(
+                                transitionTime, easing = EaseInOut
+                            ),
+                            targetOffsetY = {it}
+                        )
+                    }
+                }
+            ){
                 HomeScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    viewModel = rideViewModel,
+                )
+            }
+            composable(
+                route = AppScreens.Stats.name,
+                enterTransition = {
+                    slideInHorizontally(
+                        animationSpec = tween(
+                            transitionTime, easing = EaseInOut
+                        ),
+                        initialOffsetX = {-it}
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        animationSpec = tween(
+                            transitionTime, easing = EaseInOut
+                        ),
+                        targetOffsetX = {-it}
+                    )
+                }
+            ){
+                StatsScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = AppScreens.Stats.name){
-                HomeScreen(
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            composable(route = AppScreens.History.name){
-                HomeScreen(
+            composable(
+                route = AppScreens.History.name,
+                enterTransition = {
+                    slideInHorizontally(
+                        animationSpec = tween(
+                            transitionTime, easing = EaseInOut
+                        ),
+                        initialOffsetX = {it}
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        animationSpec = tween(
+                            transitionTime, easing = EaseInOut
+                        ),
+                        targetOffsetX = {it}
+                    )
+                }
+            ){
+                RideHistoryScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
