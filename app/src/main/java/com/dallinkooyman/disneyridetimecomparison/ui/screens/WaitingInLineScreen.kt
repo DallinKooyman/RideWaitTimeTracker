@@ -35,6 +35,8 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.onTertiaryContainerDa
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.secondaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.tertiaryContainerDark
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Composable
 fun WaitingInLineScreen(
@@ -79,15 +81,17 @@ fun WaitingInLineScreen(
         )
     }
     if (showAtInteractableConfirmDialog){
+        val currentTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
+        val waited = (currentTime - rideEvent.enteredLineTime) / 60
         ConfirmDialog(
             dialogTitle = stringResource(R.string.reached_interactable_dialog_title),
             supportingText = "By confirming, ${rideEvent.rideName} will now have an interactable. " +
                     "This will also set the time until interactable for this ride event " +
-                    "to ${rideEvent.timeWaited} minutes.",
+                    "to ${waited} minutes.",
             onDismiss = { showAtInteractableConfirmDialog = false },
             onConfirm = {
                 rideEvent.hasInteractable = true
-                rideEvent.timeUntilInteractable = rideEvent.timeWaited
+                rideEvent.timeUntilInteractable = waited.toInt()
                 showAtInteractableConfirmDialog = false
                 onChange(rideEvent)
             }
@@ -106,13 +110,16 @@ fun WaitingInLineScreen(
         )
     }
     if (showOnRideConfirmDialog){
+        val currentTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
+        val waited = (currentTime - rideEvent.enteredLineTime) / 60
         ConfirmDialog(
             dialogTitle = "Are you getting on \n${rideEvent.rideName}?",
-            supportingText = "Total Time waited: ${rideEvent.timeWaited} minutes\n\n" +
+            supportingText = "Total Time waited: ${waited} minutes\n\n" +
                     "Confirm only if you are next in line",
             onDismiss = { showOnRideConfirmDialog = false },
             onConfirm = {
                 rideEvent.gotOnRideTime = System.currentTimeMillis() / 1000
+                rideEvent.timeWaited = waited.toInt()
                 onConfirmedOnRide(rideEvent)
                 showOnRideConfirmDialog = false
             }

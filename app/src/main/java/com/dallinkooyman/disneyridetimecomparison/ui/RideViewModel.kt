@@ -16,6 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 class RideViewModel(
     private val rideRepository: RideRepository,
@@ -24,6 +28,14 @@ class RideViewModel(
 
     private val _uiState = MutableStateFlow(RideUiState())
     val uiState: StateFlow<RideUiState> = _uiState.asStateFlow()
+
+    private var timer: Timer? = null
+    var waited = -1
+        get() {
+            val currentTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
+            this.waited = ((currentTime - _uiState.value.currentRideEvent!!.enteredLineTime) / 60).toInt()
+            return field
+        }
 
     init {
         viewModelScope.launch {
@@ -69,6 +81,29 @@ class RideViewModel(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        stopTimer()
+    }
+
+    fun startTimer() {
+        if (timer == null) {
+            timer = Timer().apply {
+                scheduleAtFixedRate(timerTask {
+                    val rideEvent = _uiState.value.currentRideEvent!!
+                    rideEvent.timeWaited = waited
+                    updateRideEventInUiState(rideEvent)
+                }, 60000, 60000) // Schedule to run every minute
+            }
+        }
+    }
+
+    fun stopTimer() {
+        timer?.cancel()
+        timer = null
+        waited = -1
+    }
+
     private fun getAllRideTimes() {
         viewModelScope.launch {
 
@@ -80,6 +115,15 @@ class RideViewModel(
         _uiState.update {
             it.copy(
                 currentRide = ride,
+            )
+        }
+    }
+
+    fun addRideEventInUiState(rideEvent: RideEvent){
+        startTimer()
+        _uiState.update {
+            it.copy(
+                currentRideEvent = rideEvent,
             )
         }
     }
@@ -136,6 +180,17 @@ class RideViewModel(
         if (validateRideEventInput()) {
             rideEventRepository.insertRideEvent(uiState.value.currentRideEvent!!.convertToRideEventEntity())
         }
+
+        uiState.value.currentRide!!.totalWaitTime += uiState.value.currentRideEvent!!.timeWaited!!
+
+        this.saveRide()
+        _uiState.update {
+            it.copy(
+                currentRideEvent = null,
+                currentRide = null
+            )
+        }
+        stopTimer()
     }
 
     suspend fun updateRideEvent(){

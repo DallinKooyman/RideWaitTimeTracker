@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.dallinkooyman.disneyridetimecomparison.Constants.TRANSITION_TIME
 import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
 import com.dallinkooyman.disneyridetimecomparison.ui.RideViewModel
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
@@ -50,7 +51,6 @@ fun DisneyRideTimeComparisonApp(
         }
     ) { innerPadding ->
         val rideViewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory)
-        val transitionTime = 150
         NavHost(
             navController = navController,
             startDestination = AppScreens.Home.name,
@@ -62,20 +62,20 @@ fun DisneyRideTimeComparisonApp(
                     when (initialState.destination.route) {
                         AppScreens.Stats.name -> slideInHorizontally(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             initialOffsetX = {it}
                         )
                         AppScreens.History.name -> slideInHorizontally(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             initialOffsetX = {-it}
                         )
 
                         else -> slideInVertically(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             initialOffsetY = {it}
                         )
@@ -85,20 +85,20 @@ fun DisneyRideTimeComparisonApp(
                     when (targetState.destination.route) {
                         AppScreens.Stats.name -> slideOutHorizontally(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             targetOffsetX = {it}
                         )
                         AppScreens.History.name -> slideOutHorizontally(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             targetOffsetX = {-it}
                         )
 
                         else -> slideOutVertically(
                             animationSpec = tween(
-                                transitionTime, easing = EaseInOut
+                                TRANSITION_TIME, easing = EaseInOut
                             ),
                             targetOffsetY = {it}
                         )
@@ -115,7 +115,7 @@ fun DisneyRideTimeComparisonApp(
                 enterTransition = {
                     slideInHorizontally(
                         animationSpec = tween(
-                            transitionTime, easing = EaseInOut
+                            TRANSITION_TIME, easing = EaseInOut
                         ),
                         initialOffsetX = {-it}
                     )
@@ -123,7 +123,7 @@ fun DisneyRideTimeComparisonApp(
                 exitTransition = {
                     slideOutHorizontally(
                         animationSpec = tween(
-                            transitionTime, easing = EaseInOut
+                            TRANSITION_TIME, easing = EaseInOut
                         ),
                         targetOffsetX = {-it}
                     )
@@ -138,7 +138,7 @@ fun DisneyRideTimeComparisonApp(
                 enterTransition = {
                     slideInHorizontally(
                         animationSpec = tween(
-                            transitionTime, easing = EaseInOut
+                            TRANSITION_TIME, easing = EaseInOut
                         ),
                         initialOffsetX = {it}
                     )
@@ -146,7 +146,7 @@ fun DisneyRideTimeComparisonApp(
                 exitTransition = {
                     slideOutHorizontally(
                         animationSpec = tween(
-                            transitionTime, easing = EaseInOut
+                            TRANSITION_TIME, easing = EaseInOut
                         ),
                         targetOffsetX = {it}
                     )

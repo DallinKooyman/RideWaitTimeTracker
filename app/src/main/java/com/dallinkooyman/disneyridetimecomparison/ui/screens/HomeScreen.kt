@@ -25,7 +25,7 @@ fun HomeScreen(
             uiState = uiState,
             allRides = uiState.allRides,
             updateStateCurrentRide = viewModel::updateCurrentRideInUiState,
-            onConfirmInLine = viewModel::updateRideEventInUiState,
+            onConfirmInLine = viewModel::addRideEventInUiState,
             modifier = modifier
         )
     }

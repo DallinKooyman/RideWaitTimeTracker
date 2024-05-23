@@ -42,6 +42,7 @@ class RideEvent() {
         enteredLineTime: Long,
         gotOnRideTime: Long,
         apiPostedTime: Int?,
+        ridePostedTime: Int?,
         timeWaited: Int?,
         hasInteractable: Boolean,
         timeUntilInteractable: Int?,
@@ -53,6 +54,7 @@ class RideEvent() {
         this.enteredLineTime = enteredLineTime
         this.gotOnRideTime = gotOnRideTime
         this.apiPostedTime = apiPostedTime
+        this.ridePostedWaitTime = ridePostedTime
         this.timeWaited = timeWaited
         this.hasInteractable = hasInteractable
         this.timeUntilInteractable = timeUntilInteractable
@@ -86,6 +88,15 @@ class RideEvent() {
         return rideName != "Decked Out" && enteredLineTime > 0L && gotOnRideTime >= 1L &&
                 apiPostedTime != null && (apiAndPostedTimeAreSame || ridePostedWaitTime != null)
                 && timeWaited != null
+    }
+
+    fun calculateStats(){
+        getApiDifferenceInMinutes()
+        getRidePostedDifferenceInMinutes()
+        getApiToPostedDifferenceInMinutes()
+        getApiToWaitDifferenceInPercent()
+        getRideToWaitDifferenceInPercent()
+        getApiToRideDifferenceInPercent()
     }
 
     // If the time waited is null then return null
@@ -156,19 +167,29 @@ class RideEvent() {
     }
 
     fun convertToRideEventEntity() :RideEventEntity {
+        calculateStats()
         return RideEventEntity(
             rideId = rideId,
             rideName = rideName,
             enteredLineTime = enteredLineTime,
             gotOnRideTime = gotOnRideTime,
             apiPostedTimeForEvent =  apiPostedTime?: -1,
+            apiAndPostedAreSame = if (this.apiAndPostedTimeAreSame) 1 else 0,
+            ridePostedTime = ridePostedWaitTime,
             timeWaited = timeWaited?: -1,
             hasInteractable = hasInteractable,
-            timeUntilInteractable = timeUntilInteractable?: -1
+            timeUntilInteractable = timeUntilInteractable?: -1,
+            apiDifferenceInMinutes = apiDifferenceInMinutes?: 100,
+            ridePostedDifferenceInMinutes = ridePostedDifferenceInMinutes?: 100,
+            apiToPostedDifferenceInMinutes = apiToPostedDifferenceInMinutes?: 100,
+            apiToWaitDifferenceInPercent = apiToWaitDifferenceInPercent?: 100.0,
+            rideToWaitDifferenceInPercent = rideToWaitDifferenceInPercent?: 100.0,
+            apiToRideDifferenceInPercent = apiToRideDifferenceInPercent?: 100.0
         )
     }
 
     fun convertToRideEventEntityWithEventId(): RideEventEntity {
+        calculateStats()
         return RideEventEntity(
             id = eventId,
             rideId = rideId,
@@ -176,9 +197,17 @@ class RideEvent() {
             enteredLineTime = enteredLineTime,
             gotOnRideTime = gotOnRideTime,
             apiPostedTimeForEvent =  apiPostedTime?: -1,
+            apiAndPostedAreSame = if (this.apiAndPostedTimeAreSame) 1 else 0,
+            ridePostedTime = ridePostedWaitTime,
             timeWaited = timeWaited?: -1,
             hasInteractable = hasInteractable,
-            timeUntilInteractable = timeUntilInteractable?: -1
+            timeUntilInteractable = timeUntilInteractable?: -1,
+            apiDifferenceInMinutes = apiDifferenceInMinutes?: 100,
+            ridePostedDifferenceInMinutes = ridePostedDifferenceInMinutes?: 100,
+            apiToPostedDifferenceInMinutes = apiToPostedDifferenceInMinutes?: 100,
+            apiToWaitDifferenceInPercent = apiToWaitDifferenceInPercent?: 100.0,
+            rideToWaitDifferenceInPercent = rideToWaitDifferenceInPercent?: 100.0,
+            apiToRideDifferenceInPercent = apiToRideDifferenceInPercent?: 100.0
         )
     }
 

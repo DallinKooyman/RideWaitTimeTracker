@@ -78,7 +78,7 @@ fun ChangeRideEventInfoDialog(
                     attributeValue = updatedRideEvent.timeWaited,
                     attributeFontSize = 18.sp,
                     attributeValueFontSize = 22.sp,
-                    readOnly = false
+                    readOnly = true
                 )
                 if (updatedRideEvent.hasInteractable) {
                     RideIntEditAttributeBox(

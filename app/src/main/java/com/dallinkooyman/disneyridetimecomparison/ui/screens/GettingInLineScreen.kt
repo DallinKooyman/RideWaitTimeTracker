@@ -168,9 +168,11 @@ fun GettingInLineScreen(
                             " ${rideEvent.rideName} at ${LocalTime.now().format(Constants.TIME_HOUR_FORMAT)}",
                     onDismiss = { showConfirmRideEventDialog = false },
                     onConfirm = {
+                        showConfirmRideEventDialog = false
                         rideEvent.enteredLineTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
                         rideEvent.apiPostedTime = uiState.currentRide!!.apiWaitTime
                         rideEvent.hasInteractable = uiState.currentRide!!.hasInteractable
+                        rideEvent.timeWaited = 0
                         onConfirmInLine(rideEvent)
                     }
                 )
