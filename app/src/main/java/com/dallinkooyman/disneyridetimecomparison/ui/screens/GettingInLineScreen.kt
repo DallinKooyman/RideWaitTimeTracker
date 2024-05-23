@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -28,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dallinkooyman.disneyridetimecomparison.Constants
 import com.dallinkooyman.disneyridetimecomparison.R
 import com.dallinkooyman.disneyridetimecomparison.data.ride.RideUiState
 import com.dallinkooyman.disneyridetimecomparison.model.Ride
@@ -43,7 +46,7 @@ import com.dallinkooyman.disneyridetimecomparison.ui.theme.onPrimaryContainerDar
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.onSecondaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.primaryContainerDark
 import com.dallinkooyman.disneyridetimecomparison.ui.theme.surfaceContainerHighDark
-import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -83,16 +86,18 @@ fun GettingInLineScreen(
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp)
         ) {
-            filteredRides.forEach {
-                ListItem(
-                    headlineContent = { Text(text = it.rideName) },
-                    leadingContent = { Text(text = it.apiWaitTime.toString()) },
-                    modifier = Modifier
-                        .clickable {
-                            active = false
-                            updateStateCurrentRide(allRides.find { ride: Ride -> it.rideName == ride.rideName })
-                        }
-                )
+            LazyColumn {
+                items(filteredRides) {
+                    ListItem(
+                        headlineContent = { Text(text = it.rideName) },
+                        leadingContent = { Text(text = it.apiWaitTime.toString()) },
+                        modifier = Modifier
+                            .clickable {
+                                active = false
+                                updateStateCurrentRide(allRides.find { ride: Ride -> it.rideName == ride.rideName })
+                            }
+                    )
+                }
             }
         }
 
@@ -160,7 +165,7 @@ fun GettingInLineScreen(
                 ConfirmDialog(
                     dialogTitle = "Getting in line for ${rideEvent.rideName}?",
                     supportingText = "By pressing you confirm you are stepping in line for" +
-                            " ${rideEvent.rideName} at ${LocalDate.now()}",
+                            " ${rideEvent.rideName} at ${LocalTime.now().format(Constants.TIME_HOUR_FORMAT)}",
                     onDismiss = { showConfirmRideEventDialog = false },
                     onConfirm = {
                         rideEvent.enteredLineTime = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond()
@@ -198,7 +203,7 @@ fun RideEventInfo(
             )
             RideIntEditAttributeBox(
                 attribute = stringResource(R.string.api_wait_time),
-                attributeValue = 0, //TODO Get Api wait time
+                attributeValue = currentRide.apiWaitTime, //TODO Get Api wait time
                 onValueChange = {},
                 attributeFontSize = 20.sp,
                 attributeValueFontSize = 18.sp,
