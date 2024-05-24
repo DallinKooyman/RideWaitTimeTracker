@@ -17,7 +17,7 @@ abstract class RideEventDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): RideEventDatabase {
             return Instance ?: synchronized(this){
-                Room.databaseBuilder(context, RideEventDatabase::class.java, "ride_event_database")
+                Room.databaseBuilder(context, RideEventDatabase::class.java, "ride_database")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
