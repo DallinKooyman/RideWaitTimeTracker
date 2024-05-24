@@ -120,7 +120,22 @@ class RideViewModel(
     }
 
     fun addRideEventInUiState(rideEvent: RideEvent){
+        viewModelScope.launch{
+            val waitTime = RideTimeApi.retrofitService
+                .getRideWaitTimes(rideEvent.rideId)
+            if (waitTime.liveData[0].queue?.standby != null){
+                rideEvent.apiPostedTime = waitTime.liveData[0].queue?.standby?.waitTime
+            }
+            _uiState.update {
+                it.copy(
+                    currentRideEvent = rideEvent,
+                )
+            }
+        }
         startTimer()
+    }
+
+    fun updateRideEventInUiState(rideEvent: RideEvent){
         _uiState.update {
             it.copy(
                 currentRideEvent = rideEvent,
@@ -128,10 +143,10 @@ class RideViewModel(
         }
     }
 
-    fun updateRideEventInUiState(rideEvent: RideEvent){
+    fun removeRide() {
         _uiState.update {
             it.copy(
-                currentRideEvent = rideEvent,
+                currentRide = null,
             )
         }
     }

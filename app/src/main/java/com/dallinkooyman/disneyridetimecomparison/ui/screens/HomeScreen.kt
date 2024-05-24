@@ -26,6 +26,7 @@ fun HomeScreen(
             allRides = uiState.allRides,
             updateStateCurrentRide = viewModel::updateCurrentRideInUiState,
             onConfirmInLine = viewModel::addRideEventInUiState,
+            onCancel = viewModel::removeRide,
             modifier = modifier
         )
     }

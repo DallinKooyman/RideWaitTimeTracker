@@ -57,6 +57,7 @@ fun GettingInLineScreen(
     allRides: List<Ride>,
     updateStateCurrentRide: (Ride?) -> Unit,
     onConfirmInLine: (RideEvent) -> Unit,
+    onCancel: () -> Unit,
     modifier: Modifier
 ) {
 
@@ -108,10 +109,9 @@ fun GettingInLineScreen(
             val rideEvent by remember { mutableStateOf(RideEvent())}
             rideEvent.rideName = uiState.currentRide!!.rideName
             rideEvent.rideId = uiState.currentRide!!.id
-            rideEvent.apiPostedTime = null
+            rideEvent.apiPostedTime = allRides.find { ride: Ride -> rideEvent.rideName == ride.rideName }?.apiWaitTime ?: 0
 
             var showConfirmRideEventDialog by rememberSaveable { mutableStateOf(false)}
-            var showCancelRideEventDialog by rememberSaveable { mutableStateOf(false)}
 
             RideEventInfo(
                 currentRide = uiState.currentRide!!,
@@ -125,7 +125,7 @@ fun GettingInLineScreen(
             ) {
                 Button(
                     onClick = {
-                              showCancelRideEventDialog = true
+                        onCancel()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = errorContainerDarkHighContrast,
@@ -143,7 +143,7 @@ fun GettingInLineScreen(
                 }
                 Button(
                     onClick = {
-                              showConfirmRideEventDialog = true
+                        showConfirmRideEventDialog = true
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = primaryContainerDark,
@@ -309,6 +309,7 @@ fun GettingInLineScreenPreview(){
             updateStateCurrentRide = { Ride() },
             allRides = listOf(),
             onConfirmInLine = {},
+            onCancel = {},
             modifier = Modifier
         )
     }

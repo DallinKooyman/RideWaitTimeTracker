@@ -8,6 +8,15 @@ data class RideDetails(
     val id: String,
     val name: String,
     val entityType: String,
+    val timezone: String,
+    val liveData: List<LiveData>
+)
+
+@Serializable
+data class LiveData(
+    val id: String,
+    val name: String,
+    val entityType: String,
     val parkId: String?,
     val externalId: String,
     val queue: Queue? = null,

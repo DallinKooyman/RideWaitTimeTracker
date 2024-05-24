@@ -8,5 +8,5 @@ data class ParkDetails(
     val name: String,
     val entityType: String,
     val timezone: String,
-    val liveData: List<RideDetails>
+    val liveData: List<LiveData>
 )
