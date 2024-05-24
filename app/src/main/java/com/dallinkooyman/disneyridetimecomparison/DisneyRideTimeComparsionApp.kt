@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dallinkooyman.disneyridetimecomparison.Constants.TRANSITION_TIME
 import com.dallinkooyman.disneyridetimecomparison.ui.AppViewModelProvider
+import com.dallinkooyman.disneyridetimecomparison.ui.RideHistoryViewModel
 import com.dallinkooyman.disneyridetimecomparison.ui.RideViewModel
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.HomeScreen
 import com.dallinkooyman.disneyridetimecomparison.ui.screens.RideHistoryScreen
@@ -51,6 +52,7 @@ fun DisneyRideTimeComparisonApp(
         }
     ) { innerPadding ->
         val rideViewModel: RideViewModel = viewModel(factory = AppViewModelProvider.Factory)
+        val rideHistoryViewModel: RideHistoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
         NavHost(
             navController = navController,
             startDestination = AppScreens.Home.name,
@@ -153,6 +155,7 @@ fun DisneyRideTimeComparisonApp(
                 }
             ){
                 RideHistoryScreen(
+                    rideHistoryViewModel,
                     modifier = Modifier.fillMaxSize()
                 )
             }

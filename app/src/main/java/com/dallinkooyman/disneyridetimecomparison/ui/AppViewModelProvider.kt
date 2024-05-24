@@ -14,6 +14,11 @@ object AppViewModelProvider {
                 inventoryApplication().container.rideEventRepository
             )
         }
+        initializer {
+            RideHistoryViewModel(
+                inventoryApplication().container.rideEventRepository
+            )
+        }
     }
 }
 

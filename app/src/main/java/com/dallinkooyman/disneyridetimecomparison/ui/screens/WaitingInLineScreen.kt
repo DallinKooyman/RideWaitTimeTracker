@@ -180,17 +180,19 @@ fun RideStringAttributeBox(
     modifier: Modifier = Modifier
 ) {
     Box (
-        modifier = modifier
+        modifier = modifier.padding(bottom = 10.dp)
     ) {
         Row {
             Text(
                 text = "$attribute: ",
-                fontSize = fontSize
+                fontSize = fontSize,
+                lineHeight = 70.sp
             )
 
             Text(
                 text = value,
-                fontSize = fontSize
+                fontSize = fontSize,
+                lineHeight = 40.sp
             )
         }
     }
